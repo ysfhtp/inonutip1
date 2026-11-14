@@ -2674,6 +2674,18 @@
       color: #fda4af;
     }
 
+    @keyframes iosShake {
+      0%, 100% { transform: translate3d(0, 0, 0); }
+      18% { transform: translate3d(-7px, 0, 0); }
+      36% { transform: translate3d(6px, 0, 0); }
+      54% { transform: translate3d(-5px, 0, 0); }
+      72% { transform: translate3d(4px, 0, 0); }
+      90% { transform: translate3d(-2px, 0, 0); }
+    }
+    .ios-shake {
+      animation: iosShake 0.36s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    }
+
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
         animation-duration: 0.01ms !important;
@@ -2687,8 +2699,54 @@
 <body class="safe-bottom antialiased selection:bg-blue-500/20">
   <div class="ios-ambient-bg"></div>
 
+  <!-- Öğrenci Giriş Kapısı (Fail-closed: yetkili öğrenci numarası doğrulanana kadar uygulama gizlidir) -->
+  <div id="authGate" class="min-h-dvh px-4 py-8 flex items-center justify-center relative z-10">
+    <div id="authGateCard" class="ios-glass rounded-3xl max-w-md w-full p-6 space-y-5 shadow-2xl">
+      <div class="flex items-center justify-between gap-2">
+        <span id="authFacultyBadge" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-500/15 text-blue-600 dark:text-blue-400 text-[11px] font-semibold">
+          İnönü Tıp • Dönem I
+        </span>
+        <div class="flex items-center gap-2 shrink-0">
+          <div class="ios-pill-control p-0.5 rounded-full flex items-center text-[11px]" role="group" aria-label="Dil Seçimi">
+            <button id="btnAuthLangTr" type="button" class="px-2 py-1 rounded-full font-semibold bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-2xs transition">TR</button>
+            <button id="btnAuthLangEn" type="button" class="px-2 py-1 rounded-full font-medium text-slate-600 dark:text-slate-300 transition">EN</button>
+          </div>
+          <button id="btnAuthToggleTheme" type="button" class="w-8 h-8 rounded-full ios-pill-control flex items-center justify-center text-slate-700 dark:text-slate-200 transition active:scale-95" aria-label="Tema Değiştir">
+            <svg id="authIconSun" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M12 8a4 4 0 100 8 4 4 0 000-8z"></path></svg>
+            <svg id="authIconMoon" class="w-4 h-4 hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="space-y-1.5">
+        <div class="w-11 h-11 rounded-2xl bg-blue-500/15 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-3">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+        </div>
+        <h1 id="authTitle" class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">Öğrenci Girişi</h1>
+        <p id="authSubtitle" class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+          Bu platforma yalnızca Dönem I öğrenci listesinde yer alan öğrenciler 11 haneli öğrenci numaralarıyla giriş yapabilir.
+        </p>
+      </div>
+
+      <form id="authLoginForm" class="space-y-3" novalidate>
+        <div class="space-y-1.5">
+          <label id="authInputLabel" for="authStudentIdInput" class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Öğrenci Numarası</label>
+          <input id="authStudentIdInput" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" maxlength="16" placeholder="XXXXXXXXXXX" class="w-full ios-pill-control rounded-2xl px-4 py-3 text-sm sm:text-base font-semibold tracking-wide tabular-nums text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition">
+        </div>
+        <p id="authErrorMsg" role="alert" class="hidden rounded-2xl px-3.5 py-2.5 text-xs font-semibold leading-snug calc-status-fail"></p>
+        <button id="btnAuthSubmit" type="submit" class="ios-press w-full py-3 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold shadow-sm transition">
+          Giriş Yap
+        </button>
+      </form>
+
+      <p id="authPrivacyHint" class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed text-center">
+        Numaranız yalnızca yetkili öğrenci listesine karşı cihazınızda doğrulanır.
+      </p>
+    </div>
+  </div>
+
   <!-- Üst Başlık -->
-  <header id="appHeader" class="fixed top-0 left-0 right-0 z-30 ios-glass-bar pt-[env(safe-area-inset-top,0px)]">
+  <header id="appHeader" class="hidden fixed top-0 left-0 right-0 z-30 ios-glass-bar pt-[env(safe-area-inset-top,0px)]">
     <div class="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
       <div class="min-w-0">
         <p id="headerLiveClock" class="text-[11px] font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400 truncate">BUGÜN • 13 KASIM 2026 CUMA</p>
@@ -2715,14 +2773,21 @@
       </div>
     </div>
   </header>
-  <div id="headerSpacer" aria-hidden="true" style="height: calc(66px + env(safe-area-inset-top, 0px));"></div>
+  <div id="headerSpacer" class="hidden" aria-hidden="true" style="height: calc(66px + env(safe-area-inset-top, 0px));"></div>
 
-  <main class="max-w-2xl mx-auto px-4 pt-3.5 pb-6">
+  <main id="appMain" class="hidden max-w-2xl mx-auto px-4 pt-3.5 pb-6">
 
     <!-- ==================== TAB 1: GÜNLÜK ==================== -->
     <section id="viewDaily" class="space-y-3.5 hidden">
       <!-- DATE CARD -->
       <div class="ios-glass rounded-3xl p-4 pb-0 space-y-3">
+        <div id="dailyWelcomeBar" class="hidden flex items-center justify-between gap-2 pb-2.5 border-b border-slate-200/60 dark:border-slate-800/80">
+          <div class="flex items-center gap-2 min-w-0">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
+            <p id="dailyWelcomeText" class="text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 truncate"></p>
+          </div>
+          <span id="dailyWelcomeGroupPill" class="shrink-0 px-2.5 py-0.5 rounded-full text-[10.5px] font-semibold bg-blue-500/12 text-blue-600 dark:bg-blue-400/15 dark:text-blue-300 whitespace-nowrap"></span>
+        </div>
         <div class="flex items-start justify-between gap-2">
           <div class="min-w-0">
             <h2 id="selectedDayHeaderTitle" class="text-lg sm:text-xl font-bold tracking-tight text-slate-900 dark:text-white leading-tight whitespace-nowrap">13 Kasım 2026</h2>
@@ -2753,11 +2818,15 @@
           </div>
         </div>
 
-        <!-- Kişisel Grup Seçici (MBU & LAB) -->
-        <div class="flex items-center justify-center py-2.5 border-t border-slate-200/60 dark:border-slate-800/80">
+        <!-- Kişisel Grup Seçici (MBU & LAB) ve Çıkış Butonu -->
+        <div class="flex items-center justify-center gap-2 py-2.5 border-t border-slate-200/60 dark:border-slate-800/80 flex-wrap">
           <button id="btnOpenGroupModal" type="button" class="px-3 py-1 rounded-full ios-pill-control hover:bg-slate-500/15 text-[11px] font-semibold text-slate-600 dark:text-slate-300 transition flex items-center gap-1.5 active:scale-95">
             <svg class="w-3.5 h-3.5 text-blue-500 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
             <span id="btnGroupFilterLabel">Grubunu Seç (MBU / LAB)</span>
+          </button>
+          <button id="btnAuthLogoutDaily" type="button" class="px-3 py-1 rounded-full ios-pill-control hover:bg-rose-500/15 text-[11px] font-semibold text-rose-600 dark:text-rose-400 transition flex items-center gap-1.5 active:scale-95">
+            <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+            <span id="btnAuthLogoutDailyLabel">Çıkış Yap</span>
           </button>
         </div>
       </div>
@@ -2943,6 +3012,15 @@
         <h2 id="infoExamsTitle" class="text-base font-bold text-slate-900 dark:text-white">Sınav Saatleri</h2>
         <div id="examsListContainer" class="space-y-2"></div>
       </div>
+      <div id="authSessionCard" class="ios-glass rounded-3xl p-4 flex items-center justify-between gap-3">
+        <div class="min-w-0">
+          <p id="authSessionTitle" class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Aktif Öğrenci Oturumu</p>
+          <p id="authSessionDesc" class="text-sm font-semibold text-slate-900 dark:text-white mt-0.5 truncate tabular-nums">•••••••</p>
+        </div>
+        <button id="btnAuthLogoutInfo" type="button" class="ios-press shrink-0 px-3.5 py-2 rounded-full bg-rose-500/12 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 text-xs font-semibold transition">
+          Çıkış Yap
+        </button>
+      </div>
     </section>
 
   </main>
@@ -3087,7 +3165,7 @@
   <div id="toastBanner" class="ios-toast pointer-events-none fixed bottom-24 left-1/2 z-50 hidden px-4 py-2 rounded-full ios-glass text-slate-900 dark:text-white text-xs font-semibold shadow-lg"></div>
 
   <!-- AUTHENTIC APPLE iOS 18 FLOATING ISLAND DOCK (5 TABS) -->
-  <nav class="fixed inset-x-3 sm:inset-x-0 sm:mx-auto sm:w-[440px] z-40 select-none" style="bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px)); touch-action: none;">
+  <nav id="appNav" class="hidden fixed inset-x-3 sm:inset-x-0 sm:mx-auto sm:w-[440px] z-40 select-none" style="bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px)); touch-action: none;">
     <div id="dockContainer" class="ios-floating-dock rounded-full p-1 flex items-center justify-between relative touch-none" style="touch-action: none;">
       <!-- Continuous Gliding Pill -->
       <div id="tabIndicatorPill" style="transition: transform 0.38s cubic-bezier(0.16, 1, 0.3, 1), width 0.38s cubic-bezier(0.16, 1, 0.3, 1); transform: translate3d(4px, 0px, 0px); width: 70px;"></div>
@@ -3267,6 +3345,24 @@
         foodDatePickerTitle: 'Tarih Seç',
         foodPrevMonthAria: 'Önceki Ay',
         foodNextMonthAria: 'Sonraki Ay',
+        authFacultyBadge: 'İnönü Tıp • Dönem I',
+        authTitle: 'Öğrenci Girişi',
+        authSubtitle: 'Bu platforma yalnızca Dönem I öğrenci listesinde yer alan öğrenciler 11 haneli öğrenci numaralarıyla giriş yapabilir.',
+        authInputLabel: 'Öğrenci Numarası',
+        authInputPlaceholder: 'XXXXXXXXXXX',
+        authSubmitBtn: 'Giriş Yap',
+        authPrivacyHint: 'Numaranız yalnızca yetkili öğrenci listesine karşı cihazınızda doğrulanır.',
+        authErrEmpty: 'Lütfen öğrenci numaranızı girin.',
+        authErrFormat: 'Geçerli bir 11 haneli öğrenci numarası girin (01 ile başlar).',
+        authErrDenied: 'Bu öğrenci numarası yetkili Dönem I listesinde bulunamadı.',
+        authErrSystem: 'Doğrulama modülü yükleniyor, lütfen tekrar deneyin.',
+        authWelcomeGreeting: (name) => `Hoş geldin ${name}`,
+        authWelcomeGroupBadge: (grp) => `Grup ${grp}`,
+        authWelcomeToast: (grp, name) => name ? `Hoş geldin ${name} • Grup ${grp}` : `Giriş yapıldı • Grup ${grp}`,
+        authSessionTitle: 'Aktif Öğrenci Oturumu',
+        authSessionLabel: (last4, grp, name) => name ? `${name} • •••••••${last4} • Grup ${grp}` : `•••••••${last4} • Grup ${grp}`,
+        authLogoutBtn: 'Çıkış Yap',
+        authLogoutToast: 'Oturum kapatıldı',
         months: MONTHS_TR,
         monthsShort: MONTHS_SHORT_TR,
         days: DAYS_TR,
@@ -3391,6 +3487,24 @@
         foodDatePickerTitle: 'Select Date',
         foodPrevMonthAria: 'Previous Month',
         foodNextMonthAria: 'Next Month',
+        authFacultyBadge: 'İnönü Medicine • Term I',
+        authTitle: 'Student Sign In',
+        authSubtitle: 'Only authorized Term I students on the official roster can access this platform using their 11-digit student ID.',
+        authInputLabel: 'Student ID Number',
+        authInputPlaceholder: 'XXXXXXXXXXX',
+        authSubmitBtn: 'Sign In',
+        authPrivacyHint: 'Verified locally against the authorized student roster.',
+        authErrEmpty: 'Please enter your student ID number.',
+        authErrFormat: 'Enter a valid 11-digit student ID starting with 01.',
+        authErrDenied: 'This student ID is not on the authorized Term I roster.',
+        authErrSystem: 'Verification module is still loading, please try again.',
+        authWelcomeGreeting: (name) => `Welcome, ${name}`,
+        authWelcomeGroupBadge: (grp) => `Group ${grp}`,
+        authWelcomeToast: (grp, name) => name ? `Welcome, ${name} • Group ${grp}` : `Signed in • Group ${grp}`,
+        authSessionTitle: 'Active Student Session',
+        authSessionLabel: (last4, grp, name) => name ? `${name} • •••••••${last4} • Group ${grp}` : `•••••••${last4} • Group ${grp}`,
+        authLogoutBtn: 'Sign Out',
+        authLogoutToast: 'Signed out',
         months: MONTHS_EN,
         monthsShort: MONTHS_SHORT_EN,
         days: DAYS_EN,
@@ -3782,16 +3896,22 @@
       const html = document.documentElement;
       const sun = document.getElementById('iconSun');
       const moon = document.getElementById('iconMoon');
+      const authSun = document.getElementById('authIconSun');
+      const authMoon = document.getElementById('authIconMoon');
       const meta = document.getElementById('themeColorMeta');
       if (state.darkMode) {
         html.classList.add('dark');
         sun.classList.remove('hidden');
         moon.classList.add('hidden');
+        if (authSun) authSun.classList.remove('hidden');
+        if (authMoon) authMoon.classList.add('hidden');
         if (meta) meta.setAttribute('content', '#000000');
       } else {
         html.classList.remove('dark');
         sun.classList.add('hidden');
         moon.classList.remove('hidden');
+        if (authSun) authSun.classList.add('hidden');
+        if (authMoon) authMoon.classList.remove('hidden');
         if (meta) meta.setAttribute('content', '#eef2f7');
       }
       saveStore('darkMode', state.darkMode);
@@ -3812,12 +3932,40 @@
 
       const btnTr = document.getElementById('btnLangTr');
       const btnEn = document.getElementById('btnLangEn');
+      const btnAuthTr = document.getElementById('btnAuthLangTr');
+      const btnAuthEn = document.getElementById('btnAuthLangEn');
       const activeLangCls = 'px-2 py-1 rounded-full font-semibold bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-2xs transition';
       const inactiveLangCls = 'px-2 py-1 rounded-full font-medium text-slate-600 dark:text-slate-300 transition';
       if (btnTr && btnEn) {
         btnTr.className = state.lang === 'tr' ? activeLangCls : inactiveLangCls;
         btnEn.className = state.lang === 'en' ? activeLangCls : inactiveLangCls;
       }
+      if (btnAuthTr && btnAuthEn) {
+        btnAuthTr.className = state.lang === 'tr' ? activeLangCls : inactiveLangCls;
+        btnAuthEn.className = state.lang === 'en' ? activeLangCls : inactiveLangCls;
+      }
+
+      const authBadgeEl = document.getElementById('authFacultyBadge');
+      if (authBadgeEl) authBadgeEl.textContent = loc.authFacultyBadge;
+      const authTitleEl = document.getElementById('authTitle');
+      if (authTitleEl) authTitleEl.textContent = loc.authTitle;
+      const authSubtitleEl = document.getElementById('authSubtitle');
+      if (authSubtitleEl) authSubtitleEl.textContent = loc.authSubtitle;
+      const authLabelEl = document.getElementById('authInputLabel');
+      if (authLabelEl) authLabelEl.textContent = loc.authInputLabel;
+      const authInputEl = document.getElementById('authStudentIdInput');
+      if (authInputEl) authInputEl.placeholder = loc.authInputPlaceholder;
+      const authSubmitEl = document.getElementById('btnAuthSubmit');
+      if (authSubmitEl) authSubmitEl.textContent = loc.authSubmitBtn;
+      const authPrivacyEl = document.getElementById('authPrivacyHint');
+      if (authPrivacyEl) authPrivacyEl.textContent = loc.authPrivacyHint;
+      const authSessionTitleEl = document.getElementById('authSessionTitle');
+      if (authSessionTitleEl) authSessionTitleEl.textContent = loc.authSessionTitle;
+      const btnAuthLogoutInfoEl = document.getElementById('btnAuthLogoutInfo');
+      if (btnAuthLogoutInfoEl) btnAuthLogoutInfoEl.textContent = loc.authLogoutBtn;
+      const btnAuthLogoutDailyLabelEl = document.getElementById('btnAuthLogoutDailyLabel');
+      if (btnAuthLogoutDailyLabelEl) btnAuthLogoutDailyLabelEl.textContent = loc.authLogoutBtn;
+      updateAuthSessionSummary();
 
       document.getElementById('headerAppTitle').textContent = loc.headerTitle;
       document.getElementById('btnJumpTodayTop').textContent = loc.today;
@@ -6051,6 +6199,139 @@
       showToast(t('icsSavedToast'));
     }
 
+    // ==================== STUDENT AUTH GATE (FAIL-CLOSED) ====================
+    function getActiveAuthSession() {
+      const api = window.__INONU_AUTH__;
+      if (!api || typeof api.verifyStudentHash !== 'function') return null;
+      const saved = loadStore('authSession', null);
+      if (!saved || typeof saved.hash !== 'string') return null;
+      if (typeof saved.name !== 'string' || !saved.name.trim()) return null;
+      const meta = api.verifyStudentHash(saved.hash);
+      if (!meta) return null;
+      return {
+        hash: saved.hash,
+        last4: typeof saved.last4 === 'string' ? saved.last4 : '••••',
+        group: meta.group,
+        prog: meta.prog,
+        name: saved.name.trim()
+      };
+    }
+
+    function updateAuthSessionSummary() {
+      const descEl = document.getElementById('authSessionDesc');
+      const welcomeBarEl = document.getElementById('dailyWelcomeBar');
+      const welcomeTextEl = document.getElementById('dailyWelcomeText');
+      const welcomeGroupEl = document.getElementById('dailyWelcomeGroupPill');
+      const loc = I18N[state.lang];
+      const session = getActiveAuthSession();
+
+      if (!session) {
+        if (descEl) descEl.textContent = '•••••••';
+        if (welcomeBarEl) welcomeBarEl.classList.add('hidden');
+        if (welcomeTextEl) welcomeTextEl.textContent = '';
+        if (welcomeGroupEl) welcomeGroupEl.textContent = '';
+        return;
+      }
+
+      if (descEl) {
+        descEl.textContent = loc.authSessionLabel(session.last4, session.group, session.name);
+      }
+      if (welcomeBarEl && welcomeTextEl) {
+        welcomeTextEl.textContent = loc.authWelcomeGreeting(session.name);
+        if (welcomeGroupEl) {
+          welcomeGroupEl.textContent = loc.authWelcomeGroupBadge(session.group);
+        }
+        welcomeBarEl.classList.remove('hidden');
+      }
+    }
+
+    function showAuthError(msg) {
+      const errEl = document.getElementById('authErrorMsg');
+      const cardEl = document.getElementById('authGateCard');
+      if (errEl) {
+        errEl.textContent = msg;
+        errEl.classList.remove('hidden');
+      }
+      if (cardEl) {
+        cardEl.classList.remove('ios-shake');
+        void cardEl.offsetWidth;
+        cardEl.classList.add('ios-shake');
+      }
+    }
+
+    function clearAuthError() {
+      const errEl = document.getElementById('authErrorMsg');
+      if (errEl) {
+        errEl.textContent = '';
+        errEl.classList.add('hidden');
+      }
+    }
+
+    let appShellInitialized = false;
+    function revealAuthenticatedApp() {
+      const authGate = document.getElementById('authGate');
+      const header = document.getElementById('appHeader');
+      const spacer = document.getElementById('headerSpacer');
+      const mainEl = document.getElementById('appMain');
+      const navEl = document.getElementById('appNav');
+
+      if (authGate) authGate.classList.add('hidden');
+      if (header) header.classList.remove('hidden');
+      if (spacer) spacer.classList.remove('hidden');
+      if (mainEl) mainEl.classList.remove('hidden');
+      if (navEl) navEl.classList.remove('hidden');
+
+      updateAuthSessionSummary();
+      if (header && spacer) {
+        spacer.style.height = `${header.offsetHeight}px`;
+      }
+      updateHeaderScrollState();
+
+      if (!appShellInitialized) {
+        appShellInitialized = true;
+        switchTab(state.activeTab || 'daily', false);
+        requestAnimationFrame(() => updateTabIndicator(state.activeTab || 'daily', false));
+      } else {
+        if (state.activeTab === 'daily') renderDailyView();
+        if (state.activeTab === 'weekly') renderWeeklyView();
+        if (state.activeTab === 'food') renderFoodView();
+        if (state.activeTab === 'search') renderSearchView();
+        if (state.activeTab === 'info') renderInfoView();
+        requestAnimationFrame(() => updateTabIndicator(state.activeTab || 'daily', false));
+      }
+    }
+
+    function lockToAuthGate() {
+      const authGate = document.getElementById('authGate');
+      const header = document.getElementById('appHeader');
+      const spacer = document.getElementById('headerSpacer');
+      const mainEl = document.getElementById('appMain');
+      const navEl = document.getElementById('appNav');
+
+      if (header) header.classList.add('hidden');
+      if (spacer) spacer.classList.add('hidden');
+      if (mainEl) mainEl.classList.add('hidden');
+      if (navEl) navEl.classList.add('hidden');
+      if (authGate) authGate.classList.remove('hidden');
+      clearAuthError();
+      window.scrollTo({ top: 0, behavior: 'auto' });
+    }
+
+    function signOutStudent() {
+      try {
+        localStorage.removeItem(STORE_KEY + 'authSession');
+      } catch (e) {}
+      closeFoodPhotoModal();
+      closeFoodDateModal();
+      closeNoteModal();
+      closeGroupModal();
+      closeInstallModal();
+      const inp = document.getElementById('authStudentIdInput');
+      if (inp) inp.value = '';
+      lockToAuthGate();
+      showToast(t('authLogoutToast'));
+    }
+
     // ==================== BOOTSTRAP ====================
     document.addEventListener('DOMContentLoaded', () => {
       applyTheme();
@@ -6060,7 +6341,7 @@
       const appHeaderEl = document.getElementById('appHeader');
       const headerSpacerEl = document.getElementById('headerSpacer');
       const syncHeaderSpacer = () => {
-        if (appHeaderEl && headerSpacerEl) {
+        if (appHeaderEl && headerSpacerEl && !appHeaderEl.classList.contains('hidden')) {
           headerSpacerEl.style.height = `${appHeaderEl.offsetHeight}px`;
         }
       };
@@ -6082,6 +6363,10 @@
 
       document.getElementById('btnLangTr').addEventListener('click', () => setLanguage('tr'));
       document.getElementById('btnLangEn').addEventListener('click', () => setLanguage('en'));
+      const btnAuthLangTr = document.getElementById('btnAuthLangTr');
+      const btnAuthLangEn = document.getElementById('btnAuthLangEn');
+      if (btnAuthLangTr) btnAuthLangTr.addEventListener('click', () => setLanguage('tr'));
+      if (btnAuthLangEn) btnAuthLangEn.addEventListener('click', () => setLanguage('en'));
 
       setupDockInteractiveDrag();
       setupCarouselScrollIndicator();
@@ -6091,6 +6376,90 @@
         state.darkMode = !state.darkMode;
         applyTheme();
       });
+      const btnAuthToggleTheme = document.getElementById('btnAuthToggleTheme');
+      if (btnAuthToggleTheme) {
+        btnAuthToggleTheme.addEventListener('click', () => {
+          state.darkMode = !state.darkMode;
+          applyTheme();
+        });
+      }
+
+      const authInputEl = document.getElementById('authStudentIdInput');
+      const authFormEl = document.getElementById('authLoginForm');
+      if (authInputEl) {
+        authInputEl.addEventListener('input', () => {
+          const digitsOnly = authInputEl.value.replace(/\D+/g, '').slice(0, 11);
+          if (authInputEl.value !== digitsOnly) {
+            authInputEl.value = digitsOnly;
+          }
+          clearAuthError();
+        });
+      }
+      if (authFormEl) {
+        authFormEl.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const loc = I18N[state.lang];
+          const api = window.__INONU_AUTH__;
+          if (!api || typeof api.verifyStudentId !== 'function') {
+            showAuthError(loc.authErrSystem);
+            return;
+          }
+          const raw = authInputEl ? authInputEl.value : '';
+          const cleaned = api.normalizeStudentId(raw);
+          if (!cleaned) {
+            showAuthError(loc.authErrEmpty);
+            if (authInputEl) authInputEl.focus();
+            return;
+          }
+          if (!/^01\d{9}$/.test(cleaned)) {
+            showAuthError(loc.authErrFormat);
+            if (authInputEl) authInputEl.focus();
+            return;
+          }
+          const match = api.verifyStudentId(cleaned);
+          if (!match) {
+            showAuthError(loc.authErrDenied);
+            if (authInputEl) authInputEl.focus();
+            return;
+          }
+
+          let hasSavedLang = false;
+          try {
+            hasSavedLang = localStorage.getItem(STORE_KEY + 'lang') !== null;
+          } catch (err) {}
+          if (!hasSavedLang && (match.prog === 'tr' || match.prog === 'en')) {
+            state.lang = match.prog;
+            saveStore('lang', state.lang);
+          }
+          if (match.group) {
+            state.myMbuGroup = match.group;
+            saveStore('myMbuGroup', state.myMbuGroup);
+          }
+          saveStore('authSession', {
+            hash: match.hash,
+            last4: match.last4,
+            group: match.group,
+            prog: match.prog,
+            name: match.name,
+            at: Date.now()
+          });
+
+          clearAuthError();
+          if (authInputEl) authInputEl.value = '';
+          applyLanguageUI();
+          revealAuthenticatedApp();
+          showToast(I18N[state.lang].authWelcomeToast(match.group, match.name));
+        });
+      }
+
+      const btnAuthLogoutInfo = document.getElementById('btnAuthLogoutInfo');
+      if (btnAuthLogoutInfo) {
+        btnAuthLogoutInfo.addEventListener('click', signOutStudent);
+      }
+      const btnAuthLogoutDaily = document.getElementById('btnAuthLogoutDaily');
+      if (btnAuthLogoutDaily) {
+        btnAuthLogoutDaily.addEventListener('click', signOutStudent);
+      }
 
       const jumpToday = () => {
         state.selectedDate = getBestDefaultDate();
@@ -6340,10 +6709,25 @@
         }
       });
 
-      switchTab('daily', false);
-      requestAnimationFrame(() => updateTabIndicator('daily', false));
+      const evaluateInitialAuth = () => {
+        if (getActiveAuthSession()) {
+          revealAuthenticatedApp();
+        } else {
+          lockToAuthGate();
+        }
+      };
+      evaluateInitialAuth();
+      window.addEventListener('inonu-auth-ready', () => {
+        if (getActiveAuthSession()) {
+          revealAuthenticatedApp();
+        }
+      });
       if (document.fonts && document.fonts.ready) {
-        document.fonts.ready.then(() => updateTabIndicator(state.activeTab, false));
+        document.fonts.ready.then(() => {
+          if (getActiveAuthSession()) {
+            updateTabIndicator(state.activeTab, false);
+          }
+        });
       }
     });
   </script>
