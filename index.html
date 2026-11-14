@@ -2696,12 +2696,12 @@
     }
   </style>
 </head>
-<body class="safe-bottom antialiased selection:bg-blue-500/20">
+<body class="overflow-hidden h-dvh antialiased selection:bg-blue-500/20">
   <div class="ios-ambient-bg"></div>
 
   <!-- Öğrenci Giriş Kapısı (Fail-closed: yetkili öğrenci numarası doğrulanana kadar uygulama gizlidir) -->
-  <div id="authGate" class="min-h-dvh px-4 py-8 flex items-center justify-center relative z-10">
-    <div id="authGateCard" class="ios-glass rounded-3xl max-w-md w-full p-6 space-y-5 shadow-2xl">
+  <div id="authGate" class="fixed inset-0 z-10 overflow-hidden px-4 py-4 flex items-center justify-center" style="padding-top: max(1rem, env(safe-area-inset-top, 0px)); padding-bottom: max(1rem, env(safe-area-inset-bottom, 0px));">
+    <div id="authGateCard" class="ios-glass rounded-3xl max-w-md w-full p-5 sm:p-6 space-y-4 shadow-2xl">
       <div class="flex items-center justify-between gap-2">
         <span id="authFacultyBadge" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-500/15 text-blue-600 dark:text-blue-400 text-[11px] font-semibold">
           İnönü Tıp • Dönem I
@@ -6267,6 +6267,24 @@
       }
     }
 
+    function getStudentPrefs(hash) {
+      if (!hash) return {};
+      const all = loadStore('studentPrefs', {});
+      return (all && typeof all === 'object' && all[hash] && typeof all[hash] === 'object') ? all[hash] : {};
+    }
+
+    function saveCurrentStudentPrefs() {
+      const session = getActiveAuthSession();
+      if (!session || !session.hash) return;
+      const all = loadStore('studentPrefs', {});
+      const next = (all && typeof all === 'object') ? all : {};
+      next[session.hash] = {
+        myLabGroup: state.myLabGroup || '',
+        otherGroupMode: state.otherGroupMode === 'hide' ? 'hide' : 'dim'
+      };
+      saveStore('studentPrefs', next);
+    }
+
     let appShellInitialized = false;
     function revealAuthenticatedApp() {
       const authGate = document.getElementById('authGate');
@@ -6274,6 +6292,10 @@
       const spacer = document.getElementById('headerSpacer');
       const mainEl = document.getElementById('appMain');
       const navEl = document.getElementById('appNav');
+
+      document.documentElement.classList.remove('overflow-hidden', 'h-dvh');
+      document.body.classList.remove('overflow-hidden', 'h-dvh');
+      document.body.classList.add('safe-bottom');
 
       if (authGate) authGate.classList.add('hidden');
       if (header) header.classList.remove('hidden');
@@ -6307,6 +6329,10 @@
       const spacer = document.getElementById('headerSpacer');
       const mainEl = document.getElementById('appMain');
       const navEl = document.getElementById('appNav');
+
+      document.documentElement.classList.add('overflow-hidden', 'h-dvh');
+      document.body.classList.remove('safe-bottom');
+      document.body.classList.add('overflow-hidden', 'h-dvh');
 
       if (header) header.classList.add('hidden');
       if (spacer) spacer.classList.add('hidden');
@@ -6423,11 +6449,7 @@
             return;
           }
 
-          let hasSavedLang = false;
-          try {
-            hasSavedLang = localStorage.getItem(STORE_KEY + 'lang') !== null;
-          } catch (err) {}
-          if (!hasSavedLang && (match.prog === 'tr' || match.prog === 'en')) {
+          if (match.prog === 'tr' || match.prog === 'en') {
             state.lang = match.prog;
             saveStore('lang', state.lang);
           }
@@ -6435,6 +6457,11 @@
             state.myMbuGroup = match.group;
             saveStore('myMbuGroup', state.myMbuGroup);
           }
+          const prefs = getStudentPrefs(match.hash);
+          state.myLabGroup = typeof prefs.myLabGroup === 'string' ? prefs.myLabGroup : '';
+          state.otherGroupMode = prefs.otherGroupMode === 'hide' ? 'hide' : 'dim';
+          saveStore('myLabGroup', state.myLabGroup);
+          saveStore('otherGroupMode', state.otherGroupMode);
           saveStore('authSession', {
             hash: match.hash,
             last4: match.last4,
@@ -6514,6 +6541,7 @@
         btn.addEventListener('click', () => {
           state.myLabGroup = btn.getAttribute('data-lab-group') || '';
           saveStore('myLabGroup', state.myLabGroup);
+          saveCurrentStudentPrefs();
           refreshActiveScheduleViews();
         });
       });
@@ -6521,6 +6549,7 @@
         btn.addEventListener('click', () => {
           state.otherGroupMode = btn.getAttribute('data-other-mode') === 'hide' ? 'hide' : 'dim';
           saveStore('otherGroupMode', state.otherGroupMode);
+          saveCurrentStudentPrefs();
           refreshActiveScheduleViews();
         });
       });
@@ -6531,6 +6560,7 @@
         saveStore('myMbuGroup', '');
         saveStore('myLabGroup', '');
         saveStore('otherGroupMode', 'dim');
+        saveCurrentStudentPrefs();
         refreshActiveScheduleViews();
       });
 
