@@ -2794,9 +2794,9 @@
           </div>
 
           <div class="flex flex-col items-end gap-1.5 shrink-0">
-            <div class="ios-pill-control p-0.5 rounded-full flex items-center">
-              <button id="btnBannerToday" type="button" class="px-3 py-1 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-2xs transition">Bugün</button>
-              <button id="btnBannerTomorrow" type="button" class="px-3 py-1 rounded-full text-xs font-medium text-slate-600 dark:text-slate-300 transition">Yarın</button>
+            <div class="ios-pill-control p-1 rounded-full flex items-center gap-1.5 shadow-2xs">
+              <button id="btnBannerToday" type="button" class="px-3.5 py-1 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-2xs transition">Bugün</button>
+              <button id="btnBannerTomorrow" type="button" class="px-3.5 py-1 rounded-full text-xs font-medium text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition">Yarın</button>
             </div>
             <span id="selectedDayRelativeBadge" class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-blue-500/12 text-blue-600 dark:bg-blue-400/15 dark:text-blue-300 whitespace-nowrap">Bugün</span>
           </div>
@@ -3222,6 +3222,20 @@
     const MONTHS_SHORT_EN = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     const DAYS_EN = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     const DAYS_SHORT_EN = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    function getTimeBasedGreeting(lang = 'tr') {
+      const hour = new Date().getHours();
+      if (lang === 'en') {
+        if (hour >= 5 && hour < 12) return 'Good morning';
+        if (hour >= 12 && hour < 18) return 'Good afternoon';
+        if (hour >= 18 && hour < 23) return 'Good evening';
+        return 'Good night';
+      }
+      if (hour >= 5 && hour < 7) return 'İyi sabahlar';
+      if (hour >= 7 && hour < 12) return 'Günaydın';
+      if (hour >= 12 && hour < 18) return 'Tünaydın';
+      if (hour >= 18 && hour < 23) return 'İyi akşamlar';
+      return 'İyi geceler';
+    }
 
     const I18N = {
       tr: {
@@ -3354,11 +3368,15 @@
         authErrFormat: 'Geçerli bir 11 haneli öğrenci numarası girin (01 ile başlar).',
         authErrDenied: 'Bu öğrenci numarası yetkili Dönem I listesinde bulunamadı.',
         authErrRateLimited: (sec) => `Çok fazla hatalı deneme yapıldı. Lütfen ${sec} saniye bekleyin.`,
-        authErrSystem: 'Doğrulama modülü yükleniyor, lütfen tekrar deneyin.',
-        authWelcomeGreeting: (name) => `Hoş geldin ${name}`,
+        authWelcomeGreeting: (name) => {
+          const g = getTimeBasedGreeting('tr');
+          return name ? `${g} ${name}` : g;
+        },
         authWelcomeGroupBadge: (grp) => `Grup ${grp}`,
-        authWelcomeToast: (grp, name) => name ? `Hoş geldin ${name} • Grup ${grp}` : `Giriş yapıldı • Grup ${grp}`,
-        authSessionTitle: 'Aktif Öğrenci Oturumu',
+        authWelcomeToast: (grp, name) => {
+          const g = getTimeBasedGreeting('tr');
+          return name ? `${g} ${name} • Grup ${grp}` : `Giriş yapıldı • Grup ${grp}`;
+        },
         authGuestTitle: 'Öğrenci Girişi',
         authGuestDesc: 'Misafir modu • Otomatik grup ve dil için giriş yap',
         authSessionLabel: (last4, grp, name) => name ? `${name} • •••••••${last4} • Grup ${grp}` : `•••••••${last4} • Grup ${grp}`,
@@ -3501,11 +3519,15 @@
         authErrFormat: 'Enter a valid 11-digit student ID starting with 01.',
         authErrDenied: 'This student ID is not on the authorized Term I roster.',
         authErrRateLimited: (sec) => `Too many failed attempts. Please wait ${sec} seconds.`,
-        authErrSystem: 'Verification module is still loading, please try again.',
-        authWelcomeGreeting: (name) => `Welcome, ${name}`,
+        authWelcomeGreeting: (name) => {
+          const g = getTimeBasedGreeting('en');
+          return name ? `${g}, ${name}` : g;
+        },
         authWelcomeGroupBadge: (grp) => `Group ${grp}`,
-        authWelcomeToast: (grp, name) => name ? `Welcome, ${name} • Group ${grp}` : `Signed in • Group ${grp}`,
-        authSessionTitle: 'Active Student Session',
+        authWelcomeToast: (grp, name) => {
+          const g = getTimeBasedGreeting('en');
+          return name ? `${g}, ${name} • Group ${grp}` : `Signed in • Group ${grp}`;
+        },
         authGuestTitle: 'Student Sign In',
         authGuestDesc: 'Guest mode • Sign in for auto group & language',
         authSessionLabel: (last4, grp, name) => name ? `${name} • •••••••${last4} • Group ${grp}` : `•••••••${last4} • Group ${grp}`,
@@ -4671,8 +4693,8 @@
       const btnToday = document.getElementById('btnBannerToday');
       const btnTom = document.getElementById('btnBannerTomorrow');
 
-      const activePill = 'px-3 py-1 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-2xs transition';
-      const inactivePill = 'px-3 py-1 rounded-full text-xs font-medium text-slate-600 dark:text-slate-300 transition';
+      const activePill = 'px-3.5 py-1 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-2xs transition';
+      const inactivePill = 'px-3.5 py-1 rounded-full text-xs font-medium text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition';
       btnToday.className = state.selectedDate === todayTarget ? activePill : inactivePill;
       btnTom.className = state.selectedDate === tomTarget ? activePill : inactivePill;
 
@@ -5214,11 +5236,12 @@
       if (!item || !item.type || !item.path || !item.name || !item.extension) return '';
       const safePath = String(item.path).replace(/^\/+|\/+$/g, '');
       const safeName = String(item.name).trim();
-      const safeExt = String(item.extension).trim().toLowerCase();
+      const rawExt = String(item.extension).trim();
+      const extLower = rawExt.toLowerCase();
       if (!safePath || safePath.includes('..') || !/^[a-zA-Z0-9_/-]+$/.test(safePath)) return '';
       if (!/^[a-zA-Z0-9_.-]+$/.test(safeName) || safeName.includes('..')) return '';
-      if (!/^(jpg|jpeg|png|webp|gif)$/.test(safeExt)) return '';
-      return `${INONU_PANEL_BASE}servlet/image/${safePath}/${safeName}_960x540.${safeExt}`;
+      if (!/^(jpg|jpeg|png|webp|gif)$/.test(extLower)) return '';
+      return `${INONU_PANEL_BASE}servlet/image/${safePath}/${safeName}_960x540.${rawExt}`;
     }
 
     function getFoodTypeLabel(typeCode) {
@@ -5429,7 +5452,33 @@
         } else {
           img.addEventListener('load', markLoaded);
         }
+
+        let fallbackAttempt = 0;
         img.addEventListener('error', () => {
+          fallbackAttempt++;
+          const safePath = String(item.path || '').replace(/^\/+|\/+$/g, '');
+          const safeName = String(item.name || '').trim();
+          const rawExt = String(item.extension || '').trim();
+          const extLower = rawExt.toLowerCase();
+
+          if (fallbackAttempt === 1) {
+            // Case fallback: try inverted case (e.g. JPG vs jpg)
+            const altExt = rawExt === extLower ? extLower.toUpperCase() : extLower;
+            img.src = `${INONU_PANEL_BASE}servlet/image/${safePath}/${safeName}_960x540.${altExt}`;
+            return;
+          }
+          if (fallbackAttempt === 2) {
+            // Unresized fallback
+            img.src = `${INONU_PANEL_BASE}servlet/image/${safePath}/${safeName}.${rawExt}`;
+            return;
+          }
+          if (fallbackAttempt === 3) {
+            // Unresized with inverted case
+            const altExt = rawExt === extLower ? extLower.toUpperCase() : extLower;
+            img.src = `${INONU_PANEL_BASE}servlet/image/${safePath}/${safeName}.${altExt}`;
+            return;
+          }
+
           hasValidPhoto = false;
           card.classList.remove('cursor-pointer', 'food-dish-interactive', 'ios-press');
           card.removeAttribute('role');
@@ -5443,7 +5492,7 @@
         card.setAttribute('role', 'button');
         card.setAttribute('tabindex', '0');
         const handleOpen = () => {
-          if (hasValidPhoto) openFoodPhotoModal(imgUrl, titleStr, descStr, isoDate);
+          if (hasValidPhoto) openFoodPhotoModal(img.currentSrc || img.src || imgUrl, titleStr, descStr, isoDate);
         };
         card.addEventListener('click', handleOpen);
         card.addEventListener('keydown', (e) => {
