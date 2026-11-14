@@ -9,6 +9,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="İnönü Tıp D1">
   <meta name="description" content="İnönü Üniversitesi Tıp Fakültesi Dönem I (2026-2027) Türkçe ve İngilizce Ders Programı">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
   <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="192x192" href="./pwa-192x192.png">
   <link rel="icon" type="image/png" sizes="64x64" href="./favicon.png">
@@ -2696,35 +2697,32 @@
     }
   </style>
 </head>
-<body class="overflow-hidden h-dvh antialiased selection:bg-blue-500/20">
+<body class="safe-bottom antialiased selection:bg-blue-500/20">
   <div class="ios-ambient-bg"></div>
 
-  <!-- Öğrenci Giriş Kapısı (Fail-closed: yetkili öğrenci numarası doğrulanana kadar uygulama gizlidir) -->
-  <div id="authGate" class="fixed inset-0 z-10 overflow-hidden px-4 py-4 flex items-center justify-center" style="padding-top: max(1rem, env(safe-area-inset-top, 0px)); padding-bottom: max(1rem, env(safe-area-inset-bottom, 0px));">
+  <!-- İsteğe Bağlı Öğrenci Giriş Penceresi -->
+  <div id="authGate" class="fixed inset-0 z-50 hidden bg-black/40 backdrop-blur-md overflow-hidden px-4 py-4 flex items-center justify-center" style="padding-top: max(1rem, env(safe-area-inset-top, 0px)); padding-bottom: max(1rem, env(safe-area-inset-bottom, 0px));">
     <div id="authGateCard" class="ios-glass rounded-3xl max-w-md w-full p-5 sm:p-6 space-y-4 shadow-2xl">
       <div class="flex items-center justify-between gap-2">
         <span id="authFacultyBadge" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-500/15 text-blue-600 dark:text-blue-400 text-[11px] font-semibold">
           İnönü Tıp • Dönem I
         </span>
-        <div class="flex items-center gap-2 shrink-0">
+        <div class="flex items-center gap-1.5 shrink-0">
           <div class="ios-pill-control p-0.5 rounded-full flex items-center text-[11px]" role="group" aria-label="Dil Seçimi">
             <button id="btnAuthLangTr" type="button" class="px-2 py-1 rounded-full font-semibold bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-2xs transition">TR</button>
             <button id="btnAuthLangEn" type="button" class="px-2 py-1 rounded-full font-medium text-slate-600 dark:text-slate-300 transition">EN</button>
           </div>
-          <button id="btnAuthToggleTheme" type="button" class="w-8 h-8 rounded-full ios-pill-control flex items-center justify-center text-slate-700 dark:text-slate-200 transition active:scale-95" aria-label="Tema Değiştir">
-            <svg id="authIconSun" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M12 8a4 4 0 100 8 4 4 0 000-8z"></path></svg>
-            <svg id="authIconMoon" class="w-4 h-4 hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
-          </button>
+          <button id="btnCloseAuthModal" type="button" class="w-8 h-8 rounded-full ios-pill-control text-slate-500 dark:text-slate-300 flex items-center justify-center transition active:scale-95" aria-label="Kapat">✕</button>
         </div>
       </div>
 
       <div class="space-y-1.5">
-        <div class="w-11 h-11 rounded-2xl bg-blue-500/15 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-3">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+        <div class="w-11 h-11 rounded-2xl bg-blue-500/15 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-2.5">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
         </div>
-        <h1 id="authTitle" class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">Öğrenci Girişi</h1>
+        <h2 id="authTitle" class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">Öğrenci Girişi</h2>
         <p id="authSubtitle" class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-          Bu platforma yalnızca Dönem I öğrenci listesinde yer alan öğrenciler 11 haneli öğrenci numaralarıyla giriş yapabilir.
+          11 haneli öğrenci numaranla giriş yaparak kendi MBU/LAB grubunu ve TR/EN ders programını otomatik yükleyebilirsin.
         </p>
       </div>
 
@@ -2734,19 +2732,19 @@
           <input id="authStudentIdInput" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" maxlength="16" placeholder="XXXXXXXXXXX" class="w-full ios-pill-control rounded-2xl px-4 py-3 text-sm sm:text-base font-semibold tracking-wide tabular-nums text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition">
         </div>
         <p id="authErrorMsg" role="alert" class="hidden rounded-2xl px-3.5 py-2.5 text-xs font-semibold leading-snug calc-status-fail"></p>
-        <button id="btnAuthSubmit" type="submit" class="ios-press w-full py-3 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold shadow-sm transition">
+        <button id="btnAuthSubmit" type="submit" class="ios-press w-full py-3 rounded-2xl bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white text-sm font-semibold shadow-sm transition">
           Giriş Yap
         </button>
       </form>
 
       <p id="authPrivacyHint" class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed text-center">
-        Numaranız yalnızca yetkili öğrenci listesine karşı cihazınızda doğrulanır.
+        Numaranız cihazınızda doğrulanır; MBU ve LAB grup tercihleriniz hesabınıza kaydedilir.
       </p>
     </div>
   </div>
 
   <!-- Üst Başlık -->
-  <header id="appHeader" class="hidden fixed top-0 left-0 right-0 z-30 ios-glass-bar pt-[env(safe-area-inset-top,0px)]">
+  <header id="appHeader" class="fixed top-0 left-0 right-0 z-30 ios-glass-bar pt-[env(safe-area-inset-top,0px)]">
     <div class="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
       <div class="min-w-0">
         <p id="headerLiveClock" class="text-[11px] font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400 truncate">BUGÜN • 13 KASIM 2026 CUMA</p>
@@ -2773,9 +2771,9 @@
       </div>
     </div>
   </header>
-  <div id="headerSpacer" class="hidden" aria-hidden="true" style="height: calc(66px + env(safe-area-inset-top, 0px));"></div>
+  <div id="headerSpacer" aria-hidden="true" style="height: calc(66px + env(safe-area-inset-top, 0px));"></div>
 
-  <main id="appMain" class="hidden max-w-2xl mx-auto px-4 pt-3.5 pb-6">
+  <main id="appMain" class="max-w-2xl mx-auto px-4 pt-3.5 pb-6">
 
     <!-- ==================== TAB 1: GÜNLÜK ==================== -->
     <section id="viewDaily" class="space-y-3.5 hidden">
@@ -2818,15 +2816,15 @@
           </div>
         </div>
 
-        <!-- Kişisel Grup Seçici (MBU & LAB) ve Çıkış Butonu -->
+        <!-- Kişisel Grup Seçici (MBU & LAB) ve Giriş/Çıkış Butonu -->
         <div class="flex items-center justify-center gap-2 py-2.5 border-t border-slate-200/60 dark:border-slate-800/80 flex-wrap">
           <button id="btnOpenGroupModal" type="button" class="px-3 py-1 rounded-full ios-pill-control hover:bg-slate-500/15 text-[11px] font-semibold text-slate-600 dark:text-slate-300 transition flex items-center gap-1.5 active:scale-95">
             <svg class="w-3.5 h-3.5 text-blue-500 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
             <span id="btnGroupFilterLabel">Grubunu Seç (MBU / LAB)</span>
           </button>
-          <button id="btnAuthLogoutDaily" type="button" class="px-3 py-1 rounded-full ios-pill-control hover:bg-rose-500/15 text-[11px] font-semibold text-rose-600 dark:text-rose-400 transition flex items-center gap-1.5 active:scale-95">
-            <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-            <span id="btnAuthLogoutDailyLabel">Çıkış Yap</span>
+          <button id="btnAuthActionDaily" type="button" class="px-3 py-1 rounded-full ios-pill-control hover:bg-blue-500/15 text-[11px] font-semibold text-blue-600 dark:text-blue-400 transition flex items-center gap-1.5 active:scale-95">
+            <svg id="authActionDailyIcon" class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path></svg>
+            <span id="btnAuthActionDailyLabel">Öğrenci Girişi</span>
           </button>
         </div>
       </div>
@@ -3014,11 +3012,11 @@
       </div>
       <div id="authSessionCard" class="ios-glass rounded-3xl p-4 flex items-center justify-between gap-3">
         <div class="min-w-0">
-          <p id="authSessionTitle" class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Aktif Öğrenci Oturumu</p>
-          <p id="authSessionDesc" class="text-sm font-semibold text-slate-900 dark:text-white mt-0.5 truncate tabular-nums">•••••••</p>
+          <p id="authSessionTitle" class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Öğrenci Girişi</p>
+          <p id="authSessionDesc" class="text-xs sm:text-sm font-semibold text-slate-900 dark:text-white mt-0.5 truncate tabular-nums">Misafir modu • Otomatik grup için giriş yap</p>
         </div>
-        <button id="btnAuthLogoutInfo" type="button" class="ios-press shrink-0 px-3.5 py-2 rounded-full bg-rose-500/12 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 text-xs font-semibold transition">
-          Çıkış Yap
+        <button id="btnAuthActionInfo" type="button" class="ios-press shrink-0 px-3.5 py-2 rounded-full bg-blue-500/12 hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 text-xs font-semibold transition">
+          Giriş Yap
         </button>
       </div>
     </section>
@@ -3165,7 +3163,7 @@
   <div id="toastBanner" class="ios-toast pointer-events-none fixed bottom-24 left-1/2 z-50 hidden px-4 py-2 rounded-full ios-glass text-slate-900 dark:text-white text-xs font-semibold shadow-lg"></div>
 
   <!-- AUTHENTIC APPLE iOS 18 FLOATING ISLAND DOCK (5 TABS) -->
-  <nav id="appNav" class="hidden fixed inset-x-3 sm:inset-x-0 sm:mx-auto sm:w-[440px] z-40 select-none" style="bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px)); touch-action: none;">
+  <nav id="appNav" class="fixed inset-x-3 sm:inset-x-0 sm:mx-auto sm:w-[440px] z-40 select-none" style="bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px)); touch-action: none;">
     <div id="dockContainer" class="ios-floating-dock rounded-full p-1 flex items-center justify-between relative touch-none" style="touch-action: none;">
       <!-- Continuous Gliding Pill -->
       <div id="tabIndicatorPill" style="transition: transform 0.38s cubic-bezier(0.16, 1, 0.3, 1), width 0.38s cubic-bezier(0.16, 1, 0.3, 1); transform: translate3d(4px, 0px, 0px); width: 70px;"></div>
@@ -3347,20 +3345,25 @@
         foodNextMonthAria: 'Sonraki Ay',
         authFacultyBadge: 'İnönü Tıp • Dönem I',
         authTitle: 'Öğrenci Girişi',
-        authSubtitle: 'Bu platforma yalnızca Dönem I öğrenci listesinde yer alan öğrenciler 11 haneli öğrenci numaralarıyla giriş yapabilir.',
+        authSubtitle: '11 haneli öğrenci numaranla giriş yaparak kendi MBU/LAB grubunu ve TR/EN ders programını otomatik yükleyebilirsin.',
         authInputLabel: 'Öğrenci Numarası',
         authInputPlaceholder: 'XXXXXXXXXXX',
         authSubmitBtn: 'Giriş Yap',
-        authPrivacyHint: 'Numaranız yalnızca yetkili öğrenci listesine karşı cihazınızda doğrulanır.',
+        authPrivacyHint: 'Numaranız cihazınızda doğrulanır; MBU ve LAB grup tercihleriniz hesabınıza kaydedilir.',
         authErrEmpty: 'Lütfen öğrenci numaranızı girin.',
         authErrFormat: 'Geçerli bir 11 haneli öğrenci numarası girin (01 ile başlar).',
         authErrDenied: 'Bu öğrenci numarası yetkili Dönem I listesinde bulunamadı.',
+        authErrRateLimited: (sec) => `Çok fazla hatalı deneme yapıldı. Lütfen ${sec} saniye bekleyin.`,
         authErrSystem: 'Doğrulama modülü yükleniyor, lütfen tekrar deneyin.',
         authWelcomeGreeting: (name) => `Hoş geldin ${name}`,
         authWelcomeGroupBadge: (grp) => `Grup ${grp}`,
         authWelcomeToast: (grp, name) => name ? `Hoş geldin ${name} • Grup ${grp}` : `Giriş yapıldı • Grup ${grp}`,
         authSessionTitle: 'Aktif Öğrenci Oturumu',
+        authGuestTitle: 'Öğrenci Girişi',
+        authGuestDesc: 'Misafir modu • Otomatik grup ve dil için giriş yap',
         authSessionLabel: (last4, grp, name) => name ? `${name} • •••••••${last4} • Grup ${grp}` : `•••••••${last4} • Grup ${grp}`,
+        authLoginBtn: 'Öğrenci Girişi',
+        authLoginShortBtn: 'Giriş Yap',
         authLogoutBtn: 'Çıkış Yap',
         authLogoutToast: 'Oturum kapatıldı',
         months: MONTHS_TR,
@@ -3489,20 +3492,25 @@
         foodNextMonthAria: 'Next Month',
         authFacultyBadge: 'İnönü Medicine • Term I',
         authTitle: 'Student Sign In',
-        authSubtitle: 'Only authorized Term I students on the official roster can access this platform using their 11-digit student ID.',
+        authSubtitle: 'Sign in with your 11-digit student ID to automatically load your PSP/MBU & LAB group and TR/EN schedule.',
         authInputLabel: 'Student ID Number',
         authInputPlaceholder: 'XXXXXXXXXXX',
         authSubmitBtn: 'Sign In',
-        authPrivacyHint: 'Verified locally against the authorized student roster.',
+        authPrivacyHint: 'Verified locally; your PSP/MBU and LAB group choices sync to your account across devices.',
         authErrEmpty: 'Please enter your student ID number.',
         authErrFormat: 'Enter a valid 11-digit student ID starting with 01.',
         authErrDenied: 'This student ID is not on the authorized Term I roster.',
+        authErrRateLimited: (sec) => `Too many failed attempts. Please wait ${sec} seconds.`,
         authErrSystem: 'Verification module is still loading, please try again.',
         authWelcomeGreeting: (name) => `Welcome, ${name}`,
         authWelcomeGroupBadge: (grp) => `Group ${grp}`,
         authWelcomeToast: (grp, name) => name ? `Welcome, ${name} • Group ${grp}` : `Signed in • Group ${grp}`,
         authSessionTitle: 'Active Student Session',
+        authGuestTitle: 'Student Sign In',
+        authGuestDesc: 'Guest mode • Sign in for auto group & language',
         authSessionLabel: (last4, grp, name) => name ? `${name} • •••••••${last4} • Group ${grp}` : `•••••••${last4} • Group ${grp}`,
+        authLoginBtn: 'Student Sign In',
+        authLoginShortBtn: 'Sign In',
         authLogoutBtn: 'Sign Out',
         authLogoutToast: 'Signed out',
         months: MONTHS_EN,
@@ -3870,7 +3878,8 @@
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
     }
 
     function showToast(msg) {
@@ -3896,22 +3905,16 @@
       const html = document.documentElement;
       const sun = document.getElementById('iconSun');
       const moon = document.getElementById('iconMoon');
-      const authSun = document.getElementById('authIconSun');
-      const authMoon = document.getElementById('authIconMoon');
       const meta = document.getElementById('themeColorMeta');
       if (state.darkMode) {
         html.classList.add('dark');
         sun.classList.remove('hidden');
         moon.classList.add('hidden');
-        if (authSun) authSun.classList.remove('hidden');
-        if (authMoon) authMoon.classList.add('hidden');
         if (meta) meta.setAttribute('content', '#000000');
       } else {
         html.classList.remove('dark');
         sun.classList.add('hidden');
         moon.classList.remove('hidden');
-        if (authSun) authSun.classList.add('hidden');
-        if (authMoon) authMoon.classList.remove('hidden');
         if (meta) meta.setAttribute('content', '#eef2f7');
       }
       saveStore('darkMode', state.darkMode);
@@ -3959,12 +3962,6 @@
       if (authSubmitEl) authSubmitEl.textContent = loc.authSubmitBtn;
       const authPrivacyEl = document.getElementById('authPrivacyHint');
       if (authPrivacyEl) authPrivacyEl.textContent = loc.authPrivacyHint;
-      const authSessionTitleEl = document.getElementById('authSessionTitle');
-      if (authSessionTitleEl) authSessionTitleEl.textContent = loc.authSessionTitle;
-      const btnAuthLogoutInfoEl = document.getElementById('btnAuthLogoutInfo');
-      if (btnAuthLogoutInfoEl) btnAuthLogoutInfoEl.textContent = loc.authLogoutBtn;
-      const btnAuthLogoutDailyLabelEl = document.getElementById('btnAuthLogoutDailyLabel');
-      if (btnAuthLogoutDailyLabelEl) btnAuthLogoutDailyLabelEl.textContent = loc.authLogoutBtn;
       updateAuthSessionSummary();
 
       document.getElementById('headerAppTitle').textContent = loc.headerTitle;
@@ -5214,10 +5211,14 @@
     }
 
     function getFoodImageUrl(item) {
-      if (item && item.type && item.path && item.name && item.extension) {
-        return `${INONU_PANEL_BASE}servlet/image/${item.path}/${item.name}_960x540.${item.extension}`;
-      }
-      return '';
+      if (!item || !item.type || !item.path || !item.name || !item.extension) return '';
+      const safePath = String(item.path).replace(/^\/+|\/+$/g, '');
+      const safeName = String(item.name).trim();
+      const safeExt = String(item.extension).trim().toLowerCase();
+      if (!safePath || safePath.includes('..') || !/^[a-zA-Z0-9_/-]+$/.test(safePath)) return '';
+      if (!/^[a-zA-Z0-9_.-]+$/.test(safeName) || safeName.includes('..')) return '';
+      if (!/^(jpg|jpeg|png|webp|gif)$/.test(safeExt)) return '';
+      return `${INONU_PANEL_BASE}servlet/image/${safePath}/${safeName}_960x540.${safeExt}`;
     }
 
     function getFoodTypeLabel(typeCode) {
@@ -6199,7 +6200,7 @@
       showToast(t('icsSavedToast'));
     }
 
-    // ==================== STUDENT AUTH GATE (FAIL-CLOSED) ====================
+    // ==================== OPTIONAL STUDENT AUTH MODAL ====================
     function getActiveAuthSession() {
       const api = window.__INONU_AUTH__;
       if (!api || typeof api.verifyStudentHash !== 'function') return null;
@@ -6208,8 +6209,12 @@
       if (typeof saved.name !== 'string' || !saved.name.trim()) return null;
       const meta = api.verifyStudentHash(saved.hash);
       if (!meta) return null;
+      const cloudKey = (typeof saved.cloudKey === 'string' && typeof api.isValidCloudDocId === 'function' && api.isValidCloudDocId(saved.cloudKey))
+        ? saved.cloudKey
+        : '';
       return {
         hash: saved.hash,
+        cloudKey,
         last4: typeof saved.last4 === 'string' ? saved.last4 : '••••',
         group: meta.group,
         prog: meta.prog,
@@ -6218,7 +6223,12 @@
     }
 
     function updateAuthSessionSummary() {
+      const titleEl = document.getElementById('authSessionTitle');
       const descEl = document.getElementById('authSessionDesc');
+      const infoBtn = document.getElementById('btnAuthActionInfo');
+      const dailyBtn = document.getElementById('btnAuthActionDaily');
+      const dailyIcon = document.getElementById('authActionDailyIcon');
+      const dailyLabel = document.getElementById('btnAuthActionDailyLabel');
       const welcomeBarEl = document.getElementById('dailyWelcomeBar');
       const welcomeTextEl = document.getElementById('dailyWelcomeText');
       const welcomeGroupEl = document.getElementById('dailyWelcomeGroupPill');
@@ -6226,16 +6236,39 @@
       const session = getActiveAuthSession();
 
       if (!session) {
-        if (descEl) descEl.textContent = '•••••••';
+        if (titleEl) titleEl.textContent = loc.authGuestTitle;
+        if (descEl) descEl.textContent = loc.authGuestDesc;
+        if (infoBtn) {
+          infoBtn.textContent = loc.authLoginShortBtn;
+          infoBtn.className = 'ios-press shrink-0 px-3.5 py-2 rounded-full bg-blue-500/12 hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 text-xs font-semibold transition';
+        }
+        if (dailyBtn) {
+          dailyBtn.className = 'px-3 py-1 rounded-full ios-pill-control hover:bg-blue-500/15 text-[11px] font-semibold text-blue-600 dark:text-blue-400 transition flex items-center gap-1.5 active:scale-95';
+        }
+        if (dailyIcon) {
+          dailyIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>';
+        }
+        if (dailyLabel) dailyLabel.textContent = loc.authLoginBtn;
         if (welcomeBarEl) welcomeBarEl.classList.add('hidden');
         if (welcomeTextEl) welcomeTextEl.textContent = '';
         if (welcomeGroupEl) welcomeGroupEl.textContent = '';
         return;
       }
 
-      if (descEl) {
-        descEl.textContent = loc.authSessionLabel(session.last4, session.group, session.name);
+      if (titleEl) titleEl.textContent = loc.authSessionTitle;
+      if (descEl) descEl.textContent = loc.authSessionLabel(session.last4, session.group, session.name);
+      if (infoBtn) {
+        infoBtn.textContent = loc.authLogoutBtn;
+        infoBtn.className = 'ios-press shrink-0 px-3.5 py-2 rounded-full bg-rose-500/12 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 text-xs font-semibold transition';
       }
+      if (dailyBtn) {
+        dailyBtn.className = 'px-3 py-1 rounded-full ios-pill-control hover:bg-rose-500/15 text-[11px] font-semibold text-rose-600 dark:text-rose-400 transition flex items-center gap-1.5 active:scale-95';
+      }
+      if (dailyIcon) {
+        dailyIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>';
+      }
+      if (dailyLabel) dailyLabel.textContent = loc.authLogoutBtn;
+
       if (welcomeBarEl && welcomeTextEl) {
         welcomeTextEl.textContent = loc.authWelcomeGreeting(session.name);
         if (welcomeGroupEl) {
@@ -6273,88 +6306,125 @@
       return (all && typeof all === 'object' && all[hash] && typeof all[hash] === 'object') ? all[hash] : {};
     }
 
-    function saveCurrentStudentPrefs() {
-      const session = getActiveAuthSession();
-      if (!session || !session.hash) return;
+    function saveLocalStudentPrefs(hash, prefs) {
+      if (!hash || !prefs || typeof prefs !== 'object') return;
       const all = loadStore('studentPrefs', {});
       const next = (all && typeof all === 'object') ? all : {};
-      next[session.hash] = {
-        myLabGroup: state.myLabGroup || '',
-        otherGroupMode: state.otherGroupMode === 'hide' ? 'hide' : 'dim'
+      next[hash] = {
+        myMbuGroup: typeof prefs.myMbuGroup === 'string' ? prefs.myMbuGroup : '',
+        myLabGroup: typeof prefs.myLabGroup === 'string' ? prefs.myLabGroup : '',
+        otherGroupMode: prefs.otherGroupMode === 'hide' ? 'hide' : 'dim'
       };
       saveStore('studentPrefs', next);
     }
 
-    let appShellInitialized = false;
-    function revealAuthenticatedApp() {
-      const authGate = document.getElementById('authGate');
-      const header = document.getElementById('appHeader');
-      const spacer = document.getElementById('headerSpacer');
-      const mainEl = document.getElementById('appMain');
-      const navEl = document.getElementById('appNav');
-
-      document.documentElement.classList.remove('overflow-hidden', 'h-dvh');
-      document.body.classList.remove('overflow-hidden', 'h-dvh');
-      document.body.classList.add('safe-bottom');
-
-      if (authGate) authGate.classList.add('hidden');
-      if (header) header.classList.remove('hidden');
-      if (spacer) spacer.classList.remove('hidden');
-      if (mainEl) mainEl.classList.remove('hidden');
-      if (navEl) navEl.classList.remove('hidden');
-
-      updateAuthSessionSummary();
-      if (header && spacer) {
-        spacer.style.height = `${header.offsetHeight}px`;
-      }
-      updateHeaderScrollState();
-
-      if (!appShellInitialized) {
-        appShellInitialized = true;
-        switchTab(state.activeTab || 'daily', false);
-        requestAnimationFrame(() => updateTabIndicator(state.activeTab || 'daily', false));
-      } else {
-        if (state.activeTab === 'daily') renderDailyView();
-        if (state.activeTab === 'weekly') renderWeeklyView();
-        if (state.activeTab === 'food') renderFoodView();
-        if (state.activeTab === 'search') renderSearchView();
-        if (state.activeTab === 'info') renderInfoView();
-        requestAnimationFrame(() => updateTabIndicator(state.activeTab || 'daily', false));
+    function saveCurrentStudentPrefs(syncToCloud = true) {
+      const session = getActiveAuthSession();
+      if (!session || !session.hash) return;
+      const payload = {
+        myMbuGroup: state.myMbuGroup || '',
+        myLabGroup: state.myLabGroup || '',
+        otherGroupMode: state.otherGroupMode === 'hide' ? 'hide' : 'dim'
+      };
+      saveLocalStudentPrefs(session.hash, payload);
+      if (syncToCloud && session.cloudKey) {
+        const api = window.__INONU_AUTH__;
+        if (api && typeof api.saveCloudStudentPrefs === 'function') {
+          api.saveCloudStudentPrefs(session.hash, session.cloudKey, payload).catch(() => false);
+        }
       }
     }
 
-    function lockToAuthGate() {
-      const authGate = document.getElementById('authGate');
-      const header = document.getElementById('appHeader');
-      const spacer = document.getElementById('headerSpacer');
-      const mainEl = document.getElementById('appMain');
-      const navEl = document.getElementById('appNav');
+    function applySyncedCloudPrefs(expectedHash, cloudPrefs) {
+      if (!expectedHash || !cloudPrefs || typeof cloudPrefs !== 'object') return false;
+      const curSession = getActiveAuthSession();
+      if (!curSession || curSession.hash !== expectedHash) return false;
+      const nextMbu = typeof cloudPrefs.myMbuGroup === 'string' ? cloudPrefs.myMbuGroup : '';
+      const nextLab = typeof cloudPrefs.myLabGroup === 'string' ? cloudPrefs.myLabGroup : '';
+      const nextMode = cloudPrefs.otherGroupMode === 'hide' ? 'hide' : 'dim';
+      const changed =
+        state.myMbuGroup !== nextMbu ||
+        state.myLabGroup !== nextLab ||
+        state.otherGroupMode !== nextMode;
+      saveLocalStudentPrefs(expectedHash, {
+        myMbuGroup: nextMbu,
+        myLabGroup: nextLab,
+        otherGroupMode: nextMode
+      });
+      if (!changed) return false;
+      state.myMbuGroup = nextMbu;
+      state.myLabGroup = nextLab;
+      state.otherGroupMode = nextMode;
+      saveStore('myMbuGroup', state.myMbuGroup);
+      saveStore('myLabGroup', state.myLabGroup);
+      saveStore('otherGroupMode', state.otherGroupMode);
+      refreshAllVisibleTabsAfterAuthChange();
+      return true;
+    }
 
-      document.documentElement.classList.add('overflow-hidden', 'h-dvh');
-      document.body.classList.remove('safe-bottom');
-      document.body.classList.add('overflow-hidden', 'h-dvh');
+    let cloudStartupSyncDoneForHash = '';
+    async function syncActiveStudentCloudPrefs() {
+      const session = getActiveAuthSession();
+      const api = window.__INONU_AUTH__;
+      if (!session || !session.hash || !session.cloudKey || !api || typeof api.loadCloudStudentPrefs !== 'function') return;
+      if (cloudStartupSyncDoneForHash === session.hash) return;
+      cloudStartupSyncDoneForHash = session.hash;
+      try {
+        const cloudPrefs = await api.loadCloudStudentPrefs(session.hash, session.cloudKey);
+        if (cloudPrefs) {
+          applySyncedCloudPrefs(session.hash, cloudPrefs);
+        } else {
+          saveCurrentStudentPrefs(true);
+        }
+      } catch (e) {}
+    }
 
-      if (header) header.classList.add('hidden');
-      if (spacer) spacer.classList.add('hidden');
-      if (mainEl) mainEl.classList.add('hidden');
-      if (navEl) navEl.classList.add('hidden');
-      if (authGate) authGate.classList.remove('hidden');
+    function openAuthModal() {
       clearAuthError();
-      window.scrollTo({ top: 0, behavior: 'auto' });
+      const authGate = document.getElementById('authGate');
+      const authGateCard = document.getElementById('authGateCard');
+      const inp = document.getElementById('authStudentIdInput');
+      document.documentElement.classList.add('overflow-hidden');
+      document.body.classList.add('overflow-hidden');
+      openAnimatedModal(authGate, authGateCard, () => {
+        if (inp) inp.focus();
+      });
+    }
+
+    function closeAuthModal() {
+      const authGate = document.getElementById('authGate');
+      const authGateCard = document.getElementById('authGateCard');
+      closeAnimatedModal(authGate, authGateCard, () => {
+        document.documentElement.classList.remove('overflow-hidden');
+        document.body.classList.remove('overflow-hidden');
+        clearAuthError();
+      });
+    }
+
+    function refreshAllVisibleTabsAfterAuthChange() {
+      applyLanguageUI();
+      if (state.activeTab === 'daily') renderDailyView();
+      if (state.activeTab === 'weekly') renderWeeklyView();
+      if (state.activeTab === 'food') renderFoodView();
+      if (state.activeTab === 'search') renderSearchView();
+      if (state.activeTab === 'info') renderInfoView();
+      requestAnimationFrame(() => updateTabIndicator(state.activeTab || 'daily', false));
     }
 
     function signOutStudent() {
       try {
         localStorage.removeItem(STORE_KEY + 'authSession');
       } catch (e) {}
-      closeFoodPhotoModal();
-      closeFoodDateModal();
-      closeNoteModal();
-      closeGroupModal();
-      closeInstallModal();
+      state.myMbuGroup = '';
+      state.myLabGroup = '';
+      state.otherGroupMode = 'dim';
+      saveStore('myMbuGroup', '');
+      saveStore('myLabGroup', '');
+      saveStore('otherGroupMode', 'dim');
+
       const inp = document.getElementById('authStudentIdInput');
       if (inp) inp.value = '';
-      lockToAuthGate();
+      refreshAllVisibleTabsAfterAuthChange();
       showToast(t('authLogoutToast'));
     }
 
@@ -6402,13 +6472,6 @@
         state.darkMode = !state.darkMode;
         applyTheme();
       });
-      const btnAuthToggleTheme = document.getElementById('btnAuthToggleTheme');
-      if (btnAuthToggleTheme) {
-        btnAuthToggleTheme.addEventListener('click', () => {
-          state.darkMode = !state.darkMode;
-          applyTheme();
-        });
-      }
 
       const authInputEl = document.getElementById('authStudentIdInput');
       const authFormEl = document.getElementById('authLoginForm');
@@ -6421,10 +6484,18 @@
           clearAuthError();
         });
       }
+      let authFailedCount = 0;
+      let authLockedUntil = 0;
       if (authFormEl) {
-        authFormEl.addEventListener('submit', (e) => {
+        authFormEl.addEventListener('submit', async (e) => {
           e.preventDefault();
           const loc = I18N[state.lang];
+          const nowMs = Date.now();
+          if (nowMs < authLockedUntil) {
+            const remSec = Math.max(1, Math.ceil((authLockedUntil - nowMs) / 1000));
+            showAuthError(loc.authErrRateLimited(remSec));
+            return;
+          }
           const api = window.__INONU_AUTH__;
           if (!api || typeof api.verifyStudentId !== 'function') {
             showAuthError(loc.authErrSystem);
@@ -6444,48 +6515,124 @@
           }
           const match = api.verifyStudentId(cleaned);
           if (!match) {
-            showAuthError(loc.authErrDenied);
+            authFailedCount += 1;
+            if (authFailedCount >= 5) {
+              authLockedUntil = Date.now() + 15000;
+              authFailedCount = 0;
+              showAuthError(loc.authErrRateLimited(15));
+            } else {
+              showAuthError(loc.authErrDenied);
+            }
             if (authInputEl) authInputEl.focus();
             return;
           }
+          authFailedCount = 0;
+          authLockedUntil = 0;
+
+          const submitBtn = document.getElementById('btnAuthSubmit');
+          if (submitBtn) submitBtn.disabled = true;
+
+          const cloudKey = typeof api.deriveCloudDocId === 'function'
+            ? await api.deriveCloudDocId(cleaned).catch(() => '')
+            : '';
 
           if (match.prog === 'tr' || match.prog === 'en') {
             state.lang = match.prog;
             saveStore('lang', state.lang);
           }
-          if (match.group) {
-            state.myMbuGroup = match.group;
-            saveStore('myMbuGroup', state.myMbuGroup);
+
+          const localPrefs = getStudentPrefs(match.hash);
+          const hasLocalMbu = Object.prototype.hasOwnProperty.call(localPrefs, 'myMbuGroup');
+          state.myMbuGroup = hasLocalMbu && typeof localPrefs.myMbuGroup === 'string'
+            ? localPrefs.myMbuGroup
+            : (match.group || '');
+          state.myLabGroup = typeof localPrefs.myLabGroup === 'string' ? localPrefs.myLabGroup : '';
+          state.otherGroupMode = localPrefs.otherGroupMode === 'hide' ? 'hide' : 'dim';
+
+          let cloudPromise = null;
+          let resolvedCloudPrefs = undefined;
+          if (cloudKey && typeof api.loadCloudStudentPrefs === 'function') {
+            cloudPromise = api.loadCloudStudentPrefs(match.hash, cloudKey).catch(() => null);
+            try {
+              resolvedCloudPrefs = await Promise.race([
+                cloudPromise,
+                new Promise((resolve) => setTimeout(() => resolve(undefined), 1500))
+              ]);
+              if (resolvedCloudPrefs && typeof resolvedCloudPrefs === 'object') {
+                state.myMbuGroup = typeof resolvedCloudPrefs.myMbuGroup === 'string'
+                  ? resolvedCloudPrefs.myMbuGroup
+                  : (match.group || '');
+                state.myLabGroup = typeof resolvedCloudPrefs.myLabGroup === 'string' ? resolvedCloudPrefs.myLabGroup : '';
+                state.otherGroupMode = resolvedCloudPrefs.otherGroupMode === 'hide' ? 'hide' : 'dim';
+                saveLocalStudentPrefs(match.hash, {
+                  myMbuGroup: state.myMbuGroup,
+                  myLabGroup: state.myLabGroup,
+                  otherGroupMode: state.otherGroupMode
+                });
+              }
+            } catch (err) {}
           }
-          const prefs = getStudentPrefs(match.hash);
-          state.myLabGroup = typeof prefs.myLabGroup === 'string' ? prefs.myLabGroup : '';
-          state.otherGroupMode = prefs.otherGroupMode === 'hide' ? 'hide' : 'dim';
+
+          saveStore('myMbuGroup', state.myMbuGroup);
           saveStore('myLabGroup', state.myLabGroup);
           saveStore('otherGroupMode', state.otherGroupMode);
           saveStore('authSession', {
             hash: match.hash,
+            cloudKey,
             last4: match.last4,
             group: match.group,
             prog: match.prog,
             name: match.name,
             at: Date.now()
           });
+          cloudStartupSyncDoneForHash = match.hash;
 
+          if (resolvedCloudPrefs === null) {
+            saveCurrentStudentPrefs(true);
+          } else if (resolvedCloudPrefs === undefined && cloudPromise) {
+            cloudPromise.then((lateCloudPrefs) => {
+              if (lateCloudPrefs) {
+                applySyncedCloudPrefs(match.hash, lateCloudPrefs);
+              } else if (lateCloudPrefs === null) {
+                saveCurrentStudentPrefs(true);
+              }
+            });
+          }
+
+          if (submitBtn) submitBtn.disabled = false;
           clearAuthError();
           if (authInputEl) authInputEl.value = '';
-          applyLanguageUI();
-          revealAuthenticatedApp();
+          closeAuthModal();
+          refreshAllVisibleTabsAfterAuthChange();
           showToast(I18N[state.lang].authWelcomeToast(match.group, match.name));
         });
       }
 
-      const btnAuthLogoutInfo = document.getElementById('btnAuthLogoutInfo');
-      if (btnAuthLogoutInfo) {
-        btnAuthLogoutInfo.addEventListener('click', signOutStudent);
+      const handleAuthActionClick = () => {
+        if (getActiveAuthSession()) {
+          cloudStartupSyncDoneForHash = '';
+          signOutStudent();
+        } else {
+          openAuthModal();
+        }
+      };
+      const btnAuthActionInfo = document.getElementById('btnAuthActionInfo');
+      if (btnAuthActionInfo) {
+        btnAuthActionInfo.addEventListener('click', handleAuthActionClick);
       }
-      const btnAuthLogoutDaily = document.getElementById('btnAuthLogoutDaily');
-      if (btnAuthLogoutDaily) {
-        btnAuthLogoutDaily.addEventListener('click', signOutStudent);
+      const btnAuthActionDaily = document.getElementById('btnAuthActionDaily');
+      if (btnAuthActionDaily) {
+        btnAuthActionDaily.addEventListener('click', handleAuthActionClick);
+      }
+      const btnCloseAuthModal = document.getElementById('btnCloseAuthModal');
+      if (btnCloseAuthModal) {
+        btnCloseAuthModal.addEventListener('click', closeAuthModal);
+      }
+      const authGateOverlay = document.getElementById('authGate');
+      if (authGateOverlay) {
+        authGateOverlay.addEventListener('click', (e) => {
+          if (e.target.id === 'authGate') closeAuthModal();
+        });
       }
 
       const jumpToday = () => {
@@ -6534,6 +6681,7 @@
         btn.addEventListener('click', () => {
           state.myMbuGroup = btn.getAttribute('data-mbu-group') || '';
           saveStore('myMbuGroup', state.myMbuGroup);
+          saveCurrentStudentPrefs(true);
           refreshActiveScheduleViews();
         });
       });
@@ -6676,6 +6824,7 @@
 
       document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
+          closeAuthModal();
           closeFoodPhotoModal();
           closeFoodDateModal();
           closeNoteModal();
@@ -6739,25 +6888,16 @@
         }
       });
 
-      const evaluateInitialAuth = () => {
-        if (getActiveAuthSession()) {
-          revealAuthenticatedApp();
-        } else {
-          lockToAuthGate();
-        }
-      };
-      evaluateInitialAuth();
+      switchTab('daily', false);
+      updateAuthSessionSummary();
+      syncActiveStudentCloudPrefs();
+      requestAnimationFrame(() => updateTabIndicator('daily', false));
       window.addEventListener('inonu-auth-ready', () => {
-        if (getActiveAuthSession()) {
-          revealAuthenticatedApp();
-        }
+        updateAuthSessionSummary();
+        syncActiveStudentCloudPrefs();
       });
       if (document.fonts && document.fonts.ready) {
-        document.fonts.ready.then(() => {
-          if (getActiveAuthSession()) {
-            updateTabIndicator(state.activeTab, false);
-          }
-        });
+        document.fonts.ready.then(() => updateTabIndicator(state.activeTab, false));
       }
     });
   </script>

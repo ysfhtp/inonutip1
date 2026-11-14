@@ -1,13 +1,47 @@
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
+import fs from 'node:fs';
 import path from 'path';
 import {defineConfig} from 'vite';
 import {VitePWA} from 'vite-plugin-pwa';
+
+function protectUploadedAssets() {
+  return {
+    name: 'protect-uploaded-assets',
+    configureServer(server: { middlewares: { use: (fn: (req: { url?: string }, res: { statusCode: number; end: (s: string) => void }, next: () => void) => void) => void } }) {
+      server.middlewares.use((req, res, next) => {
+        if (req.url && req.url.includes('/assets/aistudio')) {
+          res.statusCode = 404;
+          res.end('Not found');
+          return;
+        }
+        next();
+      });
+    },
+    configurePreviewServer(server: { middlewares: { use: (fn: (req: { url?: string }, res: { statusCode: number; end: (s: string) => void }, next: () => void) => void) => void } }) {
+      server.middlewares.use((req, res, next) => {
+        if (req.url && req.url.includes('/assets/aistudio')) {
+          res.statusCode = 404;
+          res.end('Not found');
+          return;
+        }
+        next();
+      });
+    },
+    closeBundle() {
+      const target = path.resolve(__dirname, 'dist', 'assets', 'aistudio');
+      if (fs.existsSync(target)) {
+        fs.rmSync(target, { recursive: true, force: true });
+      }
+    },
+  };
+}
 
 export default defineConfig(() => {
   return {
     base: './',
     plugins: [
+      protectUploadedAssets(),
       react(),
       tailwindcss(),
       VitePWA({

@@ -1,0 +1,41 @@
+{
+  "entities": {
+    "StudentPrefs": {
+      "title": "StudentPrefs",
+      "description": "Per-student non-PII schedule group preferences synchronized across devices by a runtime-derived 256-bit salted key.",
+      "type": "object",
+      "properties": {
+        "myMbuGroup": {
+          "type": "string",
+          "enum": ["", "I", "II", "III", "IV", "V"],
+          "maxLength": 3,
+          "description": "Student's selected MBU / PSP group."
+        },
+        "myLabGroup": {
+          "type": "string",
+          "enum": ["", "1", "2"],
+          "maxLength": 1,
+          "description": "Student's selected LAB group."
+        },
+        "otherGroupMode": {
+          "type": "string",
+          "enum": ["dim", "hide"],
+          "maxLength": 4,
+          "description": "Display mode for other groups."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of the latest preference update."
+        }
+      },
+      "required": ["myMbuGroup", "myLabGroup", "otherGroupMode", "updatedAt"]
+    }
+  },
+  "firestore": {
+    "/student_prefs/{studentHash}": {
+      "schema": { "$ref": "#/entities/StudentPrefs" },
+      "description": "Stores each student's MBU/LAB group and visibility preferences keyed by a 64-hex SHA-256 key never embedded in the client bundle."
+    }
+  }
+}

@@ -249,6 +249,48 @@ export function verifyStudentId(rawSid: string): StudentAuthMatch | null {
   };
 }
 
+export function isValidCloudDocId(id: string): boolean {
+  return typeof id === 'string' && /^[a-f0-9]{64}$/.test(id);
+}
+
+function fallbackCloudHash64(sid: string): string {
+  const s = 'inonu-tip-cloud-v1|' + sid + '|prefs-doc';
+  let h1 = 0x811c9dc5 | 0;
+  let h2 = 0x9e3779b9 | 0;
+  let h3 = 0x85ebca6b | 0;
+  let h4 = 0xc2b2ae35 | 0;
+  let h5 = 0x27d4eb2f | 0;
+  let h6 = 0x165667b1 | 0;
+  let h7 = 0xd3a2646c | 0;
+  let h8 = 0xfd7046c5 | 0;
+  for (let i = 0; i < s.length; i++) {
+    const c = s.charCodeAt(i);
+    h1 = Math.imul(h1 ^ c, 0x01000193);
+    h2 = Math.imul((h2 + c + (h1 & 0xff)) | 0, 0x85ebca6b);
+    h3 = Math.imul(h3 ^ (c + 0x9e37), 0xc2b2ae35);
+    h4 = (Math.imul(h4 ^ h1, 0x27d4eb2f) + c) | 0;
+    h5 = Math.imul(h5 ^ (c + h2), 0x165667b1);
+    h6 = (Math.imul(h6 + c, 0x85ebca6b) ^ h3) | 0;
+    h7 = Math.imul(h7 ^ (c * 31 + h4), 0xc2b2ae35);
+    h8 = (Math.imul(h8 ^ h5, 0x01000193) + h6 + c) | 0;
+  }
+  return [h1, h2, h3, h4, h5, h6, h7, h8].map((x) => (x >>> 0).toString(16).padStart(8, '0')).join('');
+}
+
+export async function deriveCloudDocId(rawSid: string): Promise<string> {
+  const sid = normalizeStudentId(rawSid);
+  if (!/^01\d{9}$/.test(sid)) return '';
+  const input = 'inonu-tip-cloud-v1|' + sid + '|prefs-doc';
+  if (typeof crypto !== 'undefined' && crypto.subtle && typeof TextEncoder !== 'undefined') {
+    const bytes = new TextEncoder().encode(input);
+    const digest = await crypto.subtle.digest('SHA-256', bytes);
+    return Array.from(new Uint8Array(digest))
+      .map((b) => b.toString(16).padStart(2, '0'))
+      .join('');
+  }
+  return fallbackCloudHash64(sid);
+}
+
 export function verifyStudentHash(hash: string): { group: string; prog: 'tr' | 'en' } | null {
   if (!hash || typeof hash !== 'string') return null;
   const rawMeta = STUDENT_AUTH_MAP[hash];

@@ -1,0 +1,51 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Global safety net: deny all unspecified collections by default
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidStudentHash(id) {
+      return id is string && id.size() == 64 && id.matches('^[a-f0-9]{64}$');
+    }
+
+    function isValidStudentPrefs(data) {
+      return data.keys().hasAll(['myMbuGroup', 'myLabGroup', 'otherGroupMode', 'updatedAt'])
+        && data.keys().hasOnly(['myMbuGroup', 'myLabGroup', 'otherGroupMode', 'updatedAt'])
+        && data.myMbuGroup is string
+        && data.myMbuGroup.size() <= 3
+        && data.myMbuGroup in ['', 'I', 'II', 'III', 'IV', 'V']
+        && data.myLabGroup is string
+        && data.myLabGroup.size() <= 1
+        && data.myLabGroup in ['', '1', '2']
+        && data.otherGroupMode is string
+        && data.otherGroupMode.size() <= 4
+        && data.otherGroupMode in ['dim', 'hide']
+        && data.updatedAt is timestamp;
+    }
+
+    // Non-PII student schedule group preferences keyed by unguessable 128-bit salted hash.
+    // List and delete are strictly forbidden so no roster enumeration is possible.
+    match /student_prefs/{studentHash} {
+      allow list: if false;
+      allow get: if isValidStudentHash(studentHash);
+      allow create: if isValidStudentHash(studentHash)
+        && isValidStudentPrefs(incoming())
+        && incoming().updatedAt == request.time;
+      allow update: if isValidStudentHash(studentHash)
+        && isValidStudentPrefs(incoming())
+        && incoming().diff(existing()).affectedKeys().hasOnly(['myMbuGroup', 'myLabGroup', 'otherGroupMode', 'updatedAt'])
+        && incoming().updatedAt == request.time;
+      allow delete: if false;
+    }
+  }
+}
